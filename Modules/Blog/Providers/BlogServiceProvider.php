@@ -3,7 +3,9 @@
 namespace Modules\Blog\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Factory;
+use Modules\Blog\Repository\Interface\PostRepositoryInterface; 
+use Modules\Blog\Repository\PostRepository; 
+
 
 class BlogServiceProvider extends ServiceProvider
 {
@@ -38,6 +40,12 @@ class BlogServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+
+
+        $this->app->bind(
+            PostRepositoryInterface::class, 
+            PostRepository::class 
+        );
     }
 
     /**
