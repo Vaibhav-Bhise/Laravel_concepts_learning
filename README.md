@@ -17,7 +17,7 @@ Instructions to set up the project as follows.
 
 4. Run the following command.
  
-  --php artisan module:migrate
+  --php artisan module:migrate Blog
   
   --php artisan serve
 
