@@ -2,78 +2,69 @@
 
 namespace Modules\Blog\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use Modules\Blog\Repository\Interface\PostRepositoryInterface;
 
 class BlogController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
-    public function index()
+    protected $postRepository;
+
+    public function __construct(PostRepositoryInterface $postRepository)
     {
-        return view('blog::index');
+        $this->postRepository = $postRepository;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
+    public function index()
+    {
+        $posts = $this->postRepository->all();
+        return view('blog::index', compact('posts'));
+    }
+
     public function create()
     {
         return view('blog::create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     * @param Request $request
-     * @return Renderable
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'body' => 'required|string',
+        ]);
+
+        $this->postRepository->create($data);
+
+        return redirect()->route('blog.index');
     }
 
-    /**
-     * Show the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
     public function show($id)
     {
-        return view('blog::show');
+        $post = $this->postRepository->find($id);
+        return view('blog::show', compact('post'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     * @param int $id
-     * @return Renderable
-     */
     public function edit($id)
     {
-        return view('blog::edit');
+        $post = $this->postRepository->find($id);
+        return view('blog::edit', compact('post'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     * @param Request $request
-     * @param int $id
-     * @return Renderable
-     */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'body' => 'required|string',
+        ]);
+
+        $this->postRepository->update($id, $data);
+
+        return redirect()->route('blog.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
     public function destroy($id)
     {
-        //
+        $this->postRepository->delete($id);
+        return redirect()->route('blog.index');
     }
 }
